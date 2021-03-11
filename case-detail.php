@@ -21,16 +21,15 @@ $homephone=$_POST['homephone'];
 $workphone=$_POST['workphone'];
 $casetype=$_POST['casetype'];
 $casedetail=$_POST['casedetail'];
-$insertpic=$_FILES["img1"]["name"];
+
 $insertnote=$_POST['insertnote'];
-$insertmanual=$_POST['insertmanual'];
 $address=$_POST['address'];
 $courtdate=$_POST['courtdate'];
 $emergpname=$_POST['emergpname'];
 $emergpphone=$_POST['emergpphone'];
  $query=mysqli_query($con,"update clientcase set fullName='$fullname', sex='$sex' , placeofbirth='$placeofbirth' ,  country='$country' , city='$city' , 
-  email='$email' ,  homephone='$homephone' , workphone='$workphone' , casetype='$casetype', casedetail='$casedetail', insertpic='$insertpic' ,
-  insertnote='$insertnote' , insertmanual='$insertmanual' , address='$address' , courtdate='$courtdate' , emergpname='$emergpname' ,emergpphone= '$emergpphone'  where  id='$eid'");
+  email='$email' ,  homephone='$homephone' , workphone='$workphone' , casetype='$casetype', casedetail='$casedetail', 
+  insertnote='$insertnote' , address='$address' , courtdate='$courtdate' , emergpname='$emergpname' ,emergpphone= '$emergpphone'  where  id='$eid'");
  
 
     if ($query) {
@@ -43,6 +42,38 @@ $emergpphone=$_POST['emergpphone'];
 
   
 }
+if (isset($_GET['file_id'])) {
+    $id = $_GET['file_id'];
+
+    // fetch file to download from database
+    $sql = "SELECT * FROM clientcase WHERE id=$id";
+    $result = mysqli_query($conn, $sql);
+
+    $file = mysqli_fetch_assoc($result);
+    $filepath = 'images/icon/' . $file['insertmanual'];
+
+    if (file_exists($filepath)) {
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($filepath));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize('images/icon/' . $file['insertmanual']));
+        
+        //This part of code prevents files from being corrupted after download
+        ob_clean();
+        flush();
+        
+        readfile('images/icon/' . $file['insertmanual']);
+
+        // Now update downloads count
+       
+        exit;
+    }
+
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -56,7 +87,7 @@ $emergpphone=$_POST['emergpphone'];
     <meta name="keywords" content="au theme template">
 
     <!-- Title Page-->
-    <title>LCCMS case Details</title>
+    <title>AVSM Visitors Details</title>
 
     <!-- Fontfaces CSS-->
     <link href="css/font-face.css" rel="stylesheet" media="all">
@@ -106,7 +137,7 @@ $emergpphone=$_POST['emergpphone'];
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <strong>Case</strong>  Details
+                                        <strong>Visitor</strong>  Details
 
 <form>
 
@@ -135,7 +166,7 @@ while ($row=mysqli_fetch_array($ret)) {
 </br></br></br></br>
                                               <div class="row form-group">
                                                 <div class="col col-md-3">
-                                                    <label for="text-input" class=" form-control-label">full name</label>
+                                                    <label for="text-input" class=" form-control-label">fullname</label>
                                                 </div>
                                                 <div class="col-12 col-md-9">
                                                     <input type="text" id="fullname" name="fullname" value="<?php  echo $row['fullName'];?>" class="form-control" required="">
@@ -250,12 +281,29 @@ while ($row=mysqli_fetch_array($ret)) {
                                            <label for="text-input" class=" form-control-label">Insert picture</label>
                                         </div>
 
-                                        <div class="col-12 col-md-9">
+                                       <div class="col-sm-4">
                                           <img src="images/icon/<?php echo $row['insertpic'];?>"  width="100" height="200" style="border:solid 1px #000">
-                                         
-                                           </div>
-                                        </div>
-                                       
+                                         <a href="changeimage.php?editid=<?php echo $row['id'];?>">change image </a>
+
+                                          </div>
+                                      </div>
+                                      <div class="row form-group">
+                                                <div class="col col-md-3">
+                                                    <label for="password-input" class=" form-control-label">Insert document</label>
+                                                </div>
+                                                <div class="col-12 col-md-9">
+                                                    <input type="text" id="address" name="address" value="<?php  echo $row['insertdoc'];?>"  placeholder="document" class="form-control" required="" readonly="">
+                                                </br>
+                                                     <a href="changedoc.php?editid=<?php echo $row['id'];?>" class="btn btn-primary btn-sm">change document </a>
+                                                 </br></br>
+
+                                                
+                                                <a href="images/icon/<?php echo $row['insertdoc']; ?>"class="btn btn-primary btn-sm" download>Download</a>
+
+
+                                                    
+                                                </div>
+                                            </div>
                                         <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="textarea-input" class=" form-control-label">note</label>
@@ -267,14 +315,21 @@ while ($row=mysqli_fetch_array($ret)) {
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col col-md-3">
-                                                    <label for="textarea-input" class=" form-control-label">Manual</label>
+                                                    <label for="password-input" class=" form-control-label">mannual</label>
                                                 </div>
                                                 <div class="col-12 col-md-9">
+                                                    <input type="text" id="address" name="address" value="<?php  echo $row['insertmanual'];?>"  placeholder=" manual" class="form-control" required="" readonly="">
+                                                </br>
+                                                     <a href="changemanual.php?editid=<?php echo $row['id'];?>" class="btn btn-primary btn-sm">change manual </a>
+                                                 </br></br>
+
+                                                
+                                                <a href="images/icon/<?php echo $row['insertmanual']; ?>"class="btn btn-primary btn-sm" download>Download</a>
+
+
                                                     
-                                                    <textarea class="form-control" name="insertmanual" rows="3" required><?php  echo $row['insertmanual'];?></textarea>
                                                 </div>
                                             </div>
-                                            
                                                <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="password-input" class=" form-control-label">Address</label>
@@ -284,6 +339,8 @@ while ($row=mysqli_fetch_array($ret)) {
                                                     
                                                 </div>
                                             </div>
+
+
                                             <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="text-input" class=" form-control-label">courtdate</label>
@@ -313,7 +370,8 @@ while ($row=mysqli_fetch_array($ret)) {
                                                     
                                                 </div>
                                             </div>     
-                                                                                     
+                                            
+                                                                                        
                                             <?php } ?>
                                           <div class="card-footer">
                                         <p style="text-align: center;"><button type="submit" name="submit" id="submit" class="btn btn-primary btn-sm">Update client case
@@ -324,6 +382,7 @@ while ($row=mysqli_fetch_array($ret)) {
                                     </div>
                                    
                                 </div>
+
     
 <?php include_once('includes/footer.php');?>
 <div class="card-footer">
