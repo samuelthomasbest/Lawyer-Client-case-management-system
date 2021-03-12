@@ -14,18 +14,15 @@ $newpassword=md5($_POST['newpassword']);
 $query=mysqli_query($con,"select ID from lawyertable where ID='$adminid' and   Password='$cpassword'");
 $row=mysqli_fetch_array($query);
 if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
+$ret=mysqli_query($con,"update lawyertable set Password='$newpassword' where ID='$adminid'");
 $msg= "Your password successully changed"; 
 } else {
 
 $msg="Your current password is wrong";
 }
 
-
-
 }
 
-  
   ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +35,7 @@ $msg="Your current password is wrong";
     <meta name="keywords" content="au theme template">
 
     <!-- Title Page-->
-    <title>AVSM Change Password</title>
+    <title>LCCMS Change Password</title>
 
     <!-- Fontfaces CSS-->
     <link href="css/font-face.css" rel="stylesheet" media="all">
@@ -110,7 +107,7 @@ return true;
 
    <?php
 $adminid=$_SESSION['lccmsdbaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+$ret=mysqli_query($con,"select * from lawyertable where ID='$adminid'");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
@@ -154,10 +151,7 @@ while ($row=mysqli_fetch_array($ret)) {
                                     </div>
                                    
                                 </div>
-                       
-                     
-                        
-     
+                    
 <?php include_once('includes/footer.php');?>
                </div>
                 </div>
